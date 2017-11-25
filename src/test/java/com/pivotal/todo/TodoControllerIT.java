@@ -38,6 +38,16 @@ public class TodoControllerIT {
 		String expected = "{id:1,user:Jack,desc:\"Learn Spring Boot\",done:false}";
 
 		ResponseEntity<String> response = template.getForEntity(createUrl("/users/Jack/todos/1"), String.class);
+		System.out.println(response.getBody());
+		JSONAssert.assertEquals(expected, response.getBody(), false);
+	}
+
+	@Test
+	public void shouldReturnErrorMessage_whenTodoNotFoundExceptionIsThrown() throws Exception {
+		String expected = "{message:\"Todo Not Found\",details:\"Any details you would want to add\"}";
+
+		ResponseEntity<String> response = template.getForEntity(createUrl("/users/Jack/todos/5"), String.class);
+
 		JSONAssert.assertEquals(expected, response.getBody(), false);
 	}
 

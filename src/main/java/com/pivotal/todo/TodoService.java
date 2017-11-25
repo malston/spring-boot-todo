@@ -35,6 +35,6 @@ public class TodoService {
         return todos.stream()
                 .filter(t -> t.getId() == id)
                 .findAny()
-                .orElse(null);
+                .orElseThrow(() -> new TodoNotFoundException("Todo Not Found"));
     }
 }
