@@ -26,10 +26,18 @@ public class TodoControllerIT {
 
 	@Test
 	public void retrieveTodos() throws Exception {
-		String expected = "[" + "{id:1,user:Jack,desc:\"Learn Spring Boot\",done:false}" + ","
-				+ "{id:2,user:Jack,desc:\"Learn Reactor\",done:false}" + "]";
+		String expected = "{\"_embedded\":{\"todoList\":[{\"id\":1,\"user\":\"Jack\",\"desc\":\"Learn Spring Boot\",\"done\":false," +
+				"\"_links\":{\"parent\":{\"href\":\"http://localhost:" + port + "/users/Jack/todos\"}," +
+				"\"self\":{\"href\":\"http://localhost:" + port + "/users/Jack/todos/1\"}}}," +
+				"{\"id\":2,\"user\":\"Jack\",\"desc\":\"Learn Reactor\",\"done\":false," +
+				"\"_links\":{\"parent\":{\"href\":\"http://localhost:" + port + "/users/Jack/todos\"}," +
+				"\"self\":{\"href\":\"http://localhost:" + port + "/users/Jack/todos/2\"}}}]}," +
+				"\"_links\":{\"self\":{\"href\":\"http://localhost:" + port + "/users/Jack/todos\"}}}";
+
 		String uri = "/users/Jack/todos";
+
 		ResponseEntity<String> response = template.getForEntity(createUrl(uri), String.class);
+
 		JSONAssert.assertEquals(expected, response.getBody(), false);
 	}
 
@@ -38,7 +46,7 @@ public class TodoControllerIT {
 		String expected = "{id:1,user:Jack,desc:\"Learn Spring Boot\",done:false}";
 
 		ResponseEntity<String> response = template.getForEntity(createUrl("/users/Jack/todos/1"), String.class);
-		System.out.println(response.getBody());
+
 		JSONAssert.assertEquals(expected, response.getBody(), false);
 	}
 
@@ -54,7 +62,9 @@ public class TodoControllerIT {
 	@Test
 	public void addTodo() throws Exception {
 		Todo todo = new Todo(-1, "Jill", "Learn Spring WebFlux", new Date(), false);
+
 		URI location = template.postForLocation(createUrl("/users/Jill/todos"), todo);
+
 		assertThat(location.getPath(), containsString("/users/Jill/todos/4"));
 	}
 
